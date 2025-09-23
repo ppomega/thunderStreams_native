@@ -26,12 +26,12 @@ app.get("/assets", async (req, res) => {
 app.get("/:disk/:name/:ep/:file", async (req, res) => {
   try {
     var p = req.params.file;
-    if (p.charAt(0) == "i") {
-      p =
-        req.params.file.substring(0, 5) +
-        quality +
-        req.params.file.substring(6, req.params.file.length);
-    }
+    // if (p.charAt(0) == "i") {
+    //   p =
+    //     req.params.file.substring(0, 5) +
+    //     quality +
+    //     req.params.file.substring(6, req.params.file.length);
+    // }
     if (p.charAt(0) != "i" && p.charAt(0) != "o") {
       p =
         req.params.file.substring(0, 6) +
@@ -49,12 +49,12 @@ app.get("/:disk/:name/:ep/:file", async (req, res) => {
 app.get("/:disk/:cat/:name/:ep/:file", async (req, res) => {
   try {
     var p = req.params.file;
-    if (p.charAt(0) == "i") {
-      p =
-        req.params.file.substring(0, 5) +
-        quality +
-        req.params.file.substring(6, req.params.file.length);
-    }
+    // if (p.charAt(0) == "i") {
+    //   p =
+    //     req.params.file.substring(0, 5) +
+    //     quality +
+    //     req.params.file.substring(6, req.params.file.length);
+    // }
     if (p.charAt(0) != "i" && p.charAt(0) != "o") {
       p =
         req.params.file.substring(0, 6) +
