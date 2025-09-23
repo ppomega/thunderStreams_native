@@ -5,7 +5,7 @@ class GlobalThrottle {
   constructor() {
     // Bandwidths from your MPD (bps)
     this.qualityMap = {
-      0: 500_000, // 360p
+      0: 100_000, // 360p
       1: 1_000_000, // 480p
       2: 2_000_000, // 720p
     };
