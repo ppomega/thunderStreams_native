@@ -1,5 +1,6 @@
 const express = require("express");
 var cors = require("cors");
+const throttle = require("./throttle");
 require("dotenv").config(); // Load .env variables
 const fetch = require("./business-logic/Stream-Logic/fetch");
 const AnimeFetch = require("./business-logic/Db-Logic/animelistfetch");
@@ -25,42 +26,22 @@ app.get("/assets", async (req, res) => {
 });
 app.get("/:disk/:name/:ep/:file", async (req, res) => {
   try {
-    var p = req.params.file;
-    // if (p.charAt(0) == "i") {
-    //   p =
-    //     req.params.file.substring(0, 5) +
-    //     quality +
-    //     req.params.file.substring(6, req.params.file.length);
-    // }
-    if (p.charAt(0) != "i" && p.charAt(0) != "o") {
-      p =
-        req.params.file.substring(0, 6) +
-        quality +
-        req.params.file.substring(7, req.params.file.length);
-    }
     console.log(req.params);
     const path =
-      req.params.disk + "/" + req.params.name + "/" + req.params.ep + "/" + p;
+      req.params.disk +
+      "/" +
+      req.params.name +
+      "/" +
+      req.params.ep +
+      "/" +
+      req.params.file;
     console.log(path);
     const chunk = await fetch(path);
-    chunk.data.pipe(res);
+    chunk.data.pipe(throttle.getThrottleStream()).pipe(res);
   } catch (e) {}
 });
 app.get("/:disk/:cat/:name/:ep/:file", async (req, res) => {
   try {
-    var p = req.params.file;
-    // if (p.charAt(0) == "i") {
-    //   p =
-    //     req.params.file.substring(0, 5) +
-    //     quality +
-    //     req.params.file.substring(6, req.params.file.length);
-    // }
-    if (p.charAt(0) != "i" && p.charAt(0) != "o") {
-      p =
-        req.params.file.substring(0, 6) +
-        quality +
-        req.params.file.substring(7, req.params.file.length);
-    }
     const path =
       req.params.disk +
       "/" +
@@ -70,9 +51,9 @@ app.get("/:disk/:cat/:name/:ep/:file", async (req, res) => {
       "/" +
       req.params.ep +
       "/" +
-      p;
+      req.params.file;
     const chunk = await fetch(path);
-    chunk.data.pipe(res);
+    chunk.data.pipe(throttle.getThrottleStream()).pipe(res);
   } catch (e) {}
 });
 app.get("/file", async (req, res) => {
@@ -84,6 +65,7 @@ app.get("/file", async (req, res) => {
 });
 app.get("/quality/:id", (req, res) => {
   quality = req.params.id;
+  throttle.setQuality(quality);
   console.log(quality);
   res.send(true);
 });
