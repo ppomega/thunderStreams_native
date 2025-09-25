@@ -1,13 +1,11 @@
 const express = require("express");
 var cors = require("cors");
-const throttle = require("./throttle");
 require("dotenv").config(); // Load .env variables
 const fetch = require("./business-logic/Stream-Logic/fetch");
 const AnimeFetch = require("./business-logic/Db-Logic/animelistfetch");
 const AnimeInfoFetch = require("./business-logic/Db-Logic/animeinfo");
 const app = express();
 const PORT = process.env.PORT;
-var quality = 0;
 app.use(cors());
 app.listen(PORT, () => {
   console.log(`Server is running  http://localhost:${PORT}`);
@@ -37,7 +35,7 @@ app.get("/:disk/:name/:ep/:file", async (req, res) => {
       req.params.file;
     console.log(path);
     const chunk = await fetch(path);
-    chunk.data.pipe(throttle.getThrottleStream()).pipe(res);
+    chunk.data.pipe(res);
   } catch (e) {}
 });
 app.get("/:disk/:cat/:name/:ep/:file", async (req, res) => {
@@ -53,7 +51,7 @@ app.get("/:disk/:cat/:name/:ep/:file", async (req, res) => {
       "/" +
       req.params.file;
     const chunk = await fetch(path);
-    chunk.data.pipe(throttle.getThrottleStream()).pipe(res);
+    chunk.data.pipe(res);
   } catch (e) {}
 });
 app.get("/file", async (req, res) => {
@@ -62,10 +60,4 @@ app.get("/file", async (req, res) => {
     const file = await fetch(req.query.name);
     file.data.pipe(res);
   } catch (e) {}
-});
-app.get("/quality/:id", (req, res) => {
-  quality = req.params.id;
-  throttle.setQuality(quality);
-  console.log(quality);
-  res.send(true);
 });
